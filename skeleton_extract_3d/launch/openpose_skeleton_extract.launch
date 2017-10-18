@@ -2,9 +2,9 @@
   <!-- Launch openpose service-->
   <node name="openpose_ros_node_3d" pkg="openpose_ros_pkg" type="openpose_ros_node_3d" output="screen" />
   <!-- Launch the skeleton extractor node -->
-  <node name="skeleton_extract_3d_node" pkg="skeleton_extract_3d" type="skeleton_extract_3d_node">
-    <remap from="~point_cloud" to="/kinect2/qhd/points" />
-    <remap from="~image" to="/kinect2/qhd/image_color" />
+  <node name="skeleton_extract_3d_node" pkg="skeleton_extract_3d" type="skeleton_extract_3d_node" >
+    <remap from="~point_cloud" to="/depth/image" />
+    <remap from="~image" to="/rgb/image" />
     <remap from="~skeleton_2d_detector" to="detect_poses_3d" />
   </node>
 

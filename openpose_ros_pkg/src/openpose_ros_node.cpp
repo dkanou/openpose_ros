@@ -22,7 +22,6 @@
 #include <sensor_msgs/Image.h>
 #include <openpose_ros_msgs/GetPersons.h>
 
-
 std::shared_ptr<op::PoseExtractor> g_pose_extractor;
 std::shared_ptr<op::PoseRenderer> poseRenderer;
 std::map<unsigned int, std::string> g_bodypart_map;
@@ -30,7 +29,6 @@ op::Point<int> g_net_input_size;
 op::Point<int> output_size;
 int g_num_scales;
 double g_scale_gap;
-
 
 ros::Publisher           image_skeleton_pub;
 
@@ -58,25 +56,7 @@ T getParam(const ros::NodeHandle& nh, const std::string& param_name, T default_v
 }
 
 
-//declare publisher keypoints_pub
-ros::Publisher           keypoints_pub;
-
-template <typename K>
-K getParamK(const ros::NodeHandle& nh, const std::string& param_name, K default_value)
-{
-  K value;
-  if (nh.hasParam(param_name))
-  {
-    nh.getParam(param_name, value);
-  }
-  else
-  {
-    ROS_WARN_STREAM("Parameter '" << param_name << "' not found, defaults to '" << default_value << "'");
-    value = default_value;
-  }
-  return value;
-}
-
+ros::Publisher		 keypoints_pub;
 
 op::PoseModel stringToPoseModel(const std::string& pose_model_string)
 {
@@ -110,11 +90,9 @@ std::map<unsigned int, std::string> getBodyPartMapFromPoseModel(const op::PoseMo
   }
 }
 
-
 openpose_ros_msgs::BodypartDetection getBodyPartDetectionFromArrayAndIndex(const op::Array<float>& array, size_t idx)
 {
   openpose_ros_msgs::BodypartDetection bodypart;
-
   bodypart.x = array[idx];
   bodypart.y = array[idx+1];
   bodypart.confidence = array[idx+2];
@@ -144,7 +122,6 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
     return false;
   }
 
-	
   cv::Mat image = cv_ptr->image;
 
 //  std::string path = ros::package::getPath("openpose_ros_pkg");
@@ -206,7 +183,7 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
 
   //frameDisplayer.displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
   image_skeleton_pub.publish(ros_image);
-
+  
   // End Visualize Output
 
 
@@ -230,12 +207,13 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
     //add number of people detected
     person_msg.num_people_detected = num_people;
 
-    //add person ID
-    person_msg.person_ID = person_idx;	
+    //add person id
+    person_msg.person_ID = person_idx;
+
 
 
     // Initialize all bodyparts with nan
-    // (commented this line) --> openpose_ros_msgs::PersonDetection person_msg;
+    //openpose_ros_msgs::PersonDetection person_msg;
     person_msg.nose = getNANBodypart();
     person_msg.neck = getNANBodypart();
     person_msg.right_shoulder = getNANBodypart();
@@ -261,7 +239,6 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
       size_t final_idx = 3*(person_idx*num_bodyparts + bodypart_idx);
 
       std::string body_part_string = g_bodypart_map[bodypart_idx];
-
       openpose_ros_msgs::BodypartDetection bodypart_detection = getBodyPartDetectionFromArrayAndIndex(poses, final_idx);
 
       if (body_part_string == "Nose") person_msg.nose = bodypart_detection;
@@ -292,12 +269,9 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
       ROS_INFO("            (x, y, confidence): %i, %i, %f", bodypart_detection.x, bodypart_detection.y, bodypart_detection.confidence);
 
     }
-      
-      //publish keypoints data of person_msg	
-      keypoints_pub.publish(person_msg);
 
+    keypoints_pub.publish(person_msg);
     res.detections.push_back(person_msg);
-
   }
 
   ROS_INFO("Detected %d persons", (int) res.detections.size());
@@ -327,6 +301,7 @@ int main(int argc, char** argv)
   unsigned int num_gpu_start = getParam(local_nh, "num_gpu_start", 0);
 
 
+
   std::string package_path = ros::package::getPath("openpose_ros_pkg");
   std::string folder_location = package_path + "/../openpose/models/";
 
@@ -335,13 +310,13 @@ int main(int argc, char** argv)
   g_bodypart_map = getBodyPartMapFromPoseModel(pose_model);
 
   ros::NodeHandle nh;
-
   ros::ServiceServer service = nh.advertiseService("detect_poses", detectPosesCallback);
 
-  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 0 );  
 
+  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 0 );  
   //declare publisher of type openpose_ros_msgs::PersonDetection in topic /openpose_ros/detected_poses_keypoints
   keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 0 );
+
 
   g_pose_extractor = std::shared_ptr<op::PoseExtractorCaffe>(
 /*        new op::PoseExtractorCaffe(g_net_input_size, net_output_size, output_size, g_num_scales,

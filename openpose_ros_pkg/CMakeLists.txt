@@ -18,8 +18,10 @@ find_package(catkin REQUIRED COMPONENTS
 	openpose_ros_msgs
 	roslib
 	image_transport
+pcl_ros
 )
 
+find_package(OpenCV REQUIRED)
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -35,7 +37,8 @@ catkin_package(
   				 cv_bridge
 			 	 openpose_ros_msgs  	
 			 	 roslib
-			 	 image_transport			 
+			 	 image_transport
+pcl_ros
 )
 
 ###########
@@ -43,8 +46,9 @@ catkin_package(
 ###########
 include_directories(
 # include
-  ${catkin_INCLUDE_DIRS}
+ ${catkin_INCLUDE_DIRS}
   ${OPENPOSE_INCLUDE_DIRS}
+${OpenCV_INCLUDE_DIRS}
 )
 
 add_definitions(-DUSE_CAFFE)
@@ -68,17 +72,13 @@ target_link_libraries(openpose_ros_node ${catkin_LIBRARIES}
 										${OPENPOSE_LIBRARY}
 										${CAFFE_LIBRARY} 
 										${CUDA_LIBRARY} 
-										)							
+													${GFLAGS_LIBRARY} 
+													${GLOG_LIBRARY}
+)
+
+
+
 add_dependencies(openpose_ros_node ${catkin_EXPORTED_TARGETS})
-
-add_executable(openpose_ros_node_3d src/openpose_ros_node_3d.cpp)
-target_link_libraries(openpose_ros_node_3d ${catkin_LIBRARIES} 
-										${OPENPOSE_LIBRARY}
-										${CAFFE_LIBRARY} 
-										${CUDA_LIBRARY} 
-										)							
-add_dependencies(openpose_ros_node_3d ${catkin_EXPORTED_TARGETS})
-
 
 add_executable(openpose_ros_node_firephinx src/openpose_ros_node_firephinx.cpp)
 target_link_libraries(openpose_ros_node_firephinx ${catkin_LIBRARIES} 
@@ -90,6 +90,16 @@ target_link_libraries(openpose_ros_node_firephinx ${catkin_LIBRARIES}
 add_dependencies(openpose_ros_node_firephinx ${catkin_EXPORTED_TARGETS})
 
 
+add_executable(openpose_ros_node_3d src/openpose_ros_node_3d.cpp)
+target_link_libraries(openpose_ros_node_3d ${catkin_LIBRARIES}
+   ${OPENPOSE_LIBRARY}
+										${CAFFE_LIBRARY}
+										${CUDA_LIBRARY} 										 
+										${GFLAGS_LIBRARY} 
+										${GLOG_LIBRARY})	
+add_dependencies(openpose_ros_node_3d ${catkin_EXPORTED_TARGETS})
+
+
 add_executable(test_openpose_ros_service_call src/test_openpose_ros_service_call.cpp) 
-target_link_libraries(test_openpose_ros_service_call ${catkin_LIBRARIES})
+target_link_libraries(test_openpose_ros_service_call ${catkin_LIBRARIES} ${OpenCV_LIBS})
 add_dependencies(test_openpose_ros_service_call ${catkin_EXPORTED_TARGETS})

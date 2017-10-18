@@ -1,5 +1,10 @@
 //#define USE_CAFFE
 
+namespace google{}
+namespace gflags{}
+using namespace google;
+using namespace gflags;
+
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <image_transport/image_transport.h>
@@ -23,7 +28,9 @@
 
 // 3rdparty dependencies
 #include <gflags/gflags.h> // DEFINE_bool, DEFINE_int32, DEFINE_int64, DEFINE_uint64, DEFINE_double, DEFINE_string
+
 #include <glog/logging.h> // google::InitGoogleLogging
+
 // OpenPose dependencies
 #include <openpose/core/headers.hpp>
 #include <openpose/filestream/headers.hpp>
@@ -38,10 +45,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <openpose_ros_msgs/GetPersons.h>
 
-
-
-//#include <openpose/headers.hpp>
-
 // See all the available parameter options withe the `--help` flag. E.g. `./build/examples/openpose/openpose.bin --help`.
 // Note: This command will show you flags for other unnecessary 3rdparty files. Check only the flags for the OpenPose
 // executable. E.g. for `openpose.bin`, look for `Flags from examples/openpose/openpose.cpp:`.
@@ -49,25 +52,23 @@
 DEFINE_int32(logging_level,             4,              "The logging level. Integer in the range [0, 255]. 0 will output any log() message, while"
                                                         " 255 will not output any. Current OpenPose library messages are in the range 0-4: 1 for"
                                                         " low priority messages and 4 for important ones.");
+
 // Camera Topic
-DEFINE_string(camera_topic,             "/usb_cam/image_raw",      "Image topic that OpenPose will process.");
+DEFINE_string(camera_topic,	           "/rgb/image",	"Image topic that OpenPose will process.");
+
 // OpenPose
 std::string package_path = ros::package::getPath("openpose_ros_pkg");
 std::string model_folder_location = package_path + "/../openpose/models/";
 
-//DEFINE_string(model_folder,             "/home/stevenjj/nstrf_ws/src/openpose_ros/openpose/models/",      "Folder path (absolute or relative) where the models (pose, face, ...) are located.");
 
-/*DEFINE_string(net_resolution,           "656x368",      "Multiples of 16. If it is increased, the accuracy usually increases. If it is decreased,"
-                                                        " the speed increases.");
-// "Multiples of 16. the accuracy usually increases. If it is decreased, the speed increases                                                        */
-#define NET_RES_X 656 
-#define NET_RES_Y 368  
-/*DEFINE_string(resolution,               "1280x720",     "The image resolution (display and output). Use \"-1x-1\" to force the program to use the"
-                                                        " default images resolution.");*/
+// "Multiples of 16. the accuracy usually increases. If it is decreased, the speed increases                                                        
+#define NET_RES_X 640 
+#define NET_RES_Y 480  
+
 #define OUTPUT_RES_X 1280 // Display Resolution Output Width
 #define OUTPUT_RES_Y 720  // Display Resolution Output Height
 
-//DEFINE_string(model_pose,               "COCO",         "Model to be used (e.g. COCO, MPI, MPI_4_layers).");
+
 #define MODEL_POSE  "COCO"                 //"Model to be used (e.g. COCO, MPI, MPI_4_layers).";
 DEFINE_int32(num_gpu_start,             0,              "GPU device start number.");
 DEFINE_double(scale_gap,                0.3,            "Scale gap between scales. No effect unless num_scales>1. Initial scale is always 1. If you"
@@ -145,7 +146,7 @@ int openPoseROSTutorial()
     op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
     // Step 2 - Read Google flags (user defined configuration)
     // outputSize
-    //const auto outputSize = op::flagsToPoint(FLAGS_resolution, "1280x720");
+   
     op::Point<int> outputSize;
     outputSize.x = OUTPUT_RES_X;
     outputSize.y = OUTPUT_RES_Y;
@@ -153,46 +154,52 @@ int openPoseROSTutorial()
     op::Point<int> netInputSize;
     netInputSize.x = NET_RES_X; //656;
     netInputSize.y = NET_RES_Y; //368;
-    
+   
+
     // Declare Node Handle
-    ros::NodeHandle nh;
-
-    // Declare Service
-    ros::ServiceClient client = nh.serviceClient<openpose_ros_msgs::GetPersons>("detect_poses");
-    openpose_ros_msgs::GetPersons srv;
-
-    // Declare Publisher
-    ros::Publisher input_image_pub  = nh.advertise<sensor_msgs::Image>( "/openpose_ros/input_image", 0 );  
-
-    // Initialize cv_ptr
-    sensor_msgs::Image ros_image;
-    ros_image.encoding = sensor_msgs::image_encodings::BGR8;
-    cv_bridge::CvImagePtr cv_ptr;
-    cv_ptr = cv_bridge::toCvCopy(ros_image, sensor_msgs::image_encodings::BGR8);
-
-    // netInputSize
-    //const auto netInputSize = op::flagsToPoint(FLAGS_net_resolution, "656x368");
+     ros::NodeHandle nh;
+ 
+     // Declare Service
+     ros::ServiceClient client = nh.serviceClient<openpose_ros_msgs::GetPersons>("detect_poses");
+     openpose_ros_msgs::GetPersons srv;
+ 
+     // Declare Publisher
+     ros::Publisher input_image_pub  = nh.advertise<sensor_msgs::Image>( "/openpose_ros/input_image", 0 );  
+ 
+     // Initialize cv_ptr
+     sensor_msgs::Image ros_image;
+     ros_image.encoding = sensor_msgs::image_encodings::BGR8;
+     cv_bridge::CvImagePtr cv_ptr;
+     cv_ptr = cv_bridge::toCvCopy(ros_image, sensor_msgs::image_encodings::BGR8);
+ 
+    
+    
+    
+   
     // netOutputSize
     const auto netOutputSize = netInputSize;
+    
     // poseModel
-    //const auto poseModel = op::flagsToPoseModel(FLAGS_model_pose);
     op::PoseModel poseModel = stringToPoseModel(std::string(MODEL_POSE));
+
     // Check no contradictory flags enabled
     if (FLAGS_alpha_pose < 0. || FLAGS_alpha_pose > 1.)
         op::error("Alpha value for blending must be in the range [0,1].", __LINE__, __FUNCTION__, __FILE__);
     if (FLAGS_scale_gap <= 0. && FLAGS_num_scales > 1)
         op::error("Incompatible flag configuration: scale_gap must be greater than 0 or num_scales = 1.", __LINE__, __FUNCTION__, __FILE__);
+   
     // Logging
     op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
+ 
     // Step 3 - Initialize all required classes
     op::CvMatToOpInput cvMatToOpInput{netInputSize, FLAGS_num_scales, (float)FLAGS_scale_gap};
     op::CvMatToOpOutput cvMatToOpOutput{outputSize};
     op::PoseExtractorCaffe poseExtractorCaffe{netInputSize, netOutputSize, outputSize, FLAGS_num_scales, poseModel,
                                               model_folder_location, FLAGS_num_gpu_start};
     op::PoseRenderer poseRenderer{netOutputSize, outputSize, poseModel, nullptr, !FLAGS_disable_blending, (float)FLAGS_alpha_pose};
-    //op::PoseRenderer poseRenderer{netOutputSize, outputSize, poseModel, nullptr, true, 0.6};    
 
     op::OpOutputToCvMat opOutputToCvMat{outputSize};
+
     // Step 4 - Initialize resources on desired thread (in this case single thread, i.e. we init resources here)
     poseExtractorCaffe.initializationOnThread();
     poseRenderer.initializationOnThread();
@@ -215,11 +222,11 @@ int openPoseROSTutorial()
         if(cvImagePtr != nullptr)
         {
             cv::Mat inputImage = cvImagePtr->image;
+    
+            // Convert to ros Image msg
+     	    ros_image = *(cvImagePtr->toImageMsg());
 
-	    // Convert to ros Image msg
-    	    ros_image = *(cvImagePtr->toImageMsg());
-
-            // Step 2 - Format input image to OpenPose input and output formats
+	    // Step 2 - Format input image to OpenPose input and output formats
             op::Array<float> netInputArray;
             std::vector<float> scaleRatios;
             std::tie(netInputArray, scaleRatios) = cvMatToOpInput.format(inputImage);
@@ -227,31 +234,37 @@ int openPoseROSTutorial()
             op::Array<float> outputArray;
             std::tie(scaleInputToOutput, outputArray) = cvMatToOpOutput.format(inputImage);
             // Step 3 - Estimate poseKeypoints
-            ROS_INFO("Performing Forward Pass");
+            
 
-   // Begin Service Call
-   // You need to run the node openpose_ros_node for the service to work
-      srv.request.image = ros_image;
-        if (client.call(srv))
-        {
-          
-          //publish input image, subscribe /openpose_ros/input_image to get the input image
-    	    input_image_pub.publish(ros_image);
+	    // Begin Service Call
+            // You need to run the node openpose_ros_node for the service to work
+ 	    srv.request.image = ros_image;
+              if (client.call(srv))
+              {
+           
+                    //publish input image, subscribe /openpose_ros/input_image to get the input image
+ 	    	    input_image_pub.publish(ros_image);
+ 
+ 	 	    //subscribe to /openpose_ros/detected_poses_image to get the images
+ 	  	    //subscribe to /openpose_ros/detected_poses_keypoints to get the keypoints in (x,y,score) format
+           	    ROS_INFO("Call Successful");
+              }
+              else
+              {
+        	   ROS_ERROR("Failed to call service detect_poses");
+ 	      }
 
-	  //subscribe to /openpose_ros/detected_poses_image to get the images
-	  //subscribe to /openpose_ros/detected_poses_keypoints to get the keypoints in (x,y,score) format
-          ROS_INFO("Call Successful");
-        }
-        else
-        {
-          ROS_ERROR("Failed to call service detect_poses");
-        }
-    
+
+
+	    ROS_INFO("Performing Forward Pass");
             poseExtractorCaffe.forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
             std::cout << "Forward Pass Success" << std::endl;
 
             const auto poseKeypoints = poseExtractorCaffe.getPoseKeypoints();
             std::cout << "    Got Keypoints" << std::endl;
+	
+		
+		
             // Step 4 - Render poseKeypoints
             poseRenderer.renderPose(outputArray, poseKeypoints);
             std::cout << "    Rendering Pose" << std::endl;            
@@ -283,7 +296,8 @@ int openPoseROSTutorial()
 int main(int argc, char** argv)
 {
   google::InitGoogleLogging("openpose_ros_node");
-  gflags::ParseCommandLineFlags(&argc, &argv, true);
+  ParseCommandLineFlags(&argc, &argv, true);
+
   ros::init(argc, argv, "openpose_ros_node");
 
   return openPoseROSTutorial();

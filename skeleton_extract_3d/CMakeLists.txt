@@ -18,13 +18,15 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(PCL 1.7 REQUIRED)
 
 catkin_package(
-#  CATKIN_DEPENDS other_catkin_pkg
+  CATKIN_DEPENDS pcl_ros #other_catkin_pkg
 )
 
 include_directories(
+        ${catkin_INCLUDE_DIRS}
 	${PCL_INCLUDE_DIRS}
-	${catkin_INCLUDE_DIRS}
 )
+link_directories    (${PCL_LIBRARY_DIRS})
+add_definitions     (${PCL_DEFINITIONS})
 
 
 add_executable(skeleton_extract_3d_node src/skeleton_extract_3d_node.cpp)
@@ -32,5 +34,10 @@ target_link_libraries(skeleton_extract_3d_node ${catkin_LIBRARIES} ${PCL_LIBRARI
 add_dependencies(skeleton_extract_3d_node ${catkin_EXPORTED_TARGETS})
 
 add_executable(skeleton_extract_3d_visualization_node src/skeleton_extract_3d_visualization_node.cpp)
+
 target_link_libraries(skeleton_extract_3d_visualization_node ${catkin_LIBRARIES})
+
 add_dependencies(skeleton_extract_3d_visualization_node ${catkin_EXPORTED_TARGETS})
+  
+
+

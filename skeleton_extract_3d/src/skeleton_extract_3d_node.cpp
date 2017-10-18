@@ -14,6 +14,7 @@
 #include <openpose_ros_msgs/GetPersons.h>
 
 #include <pcl/common/common.h>
+
 #include <pcl/filters/passthrough.h>
 #include <iostream>
 
@@ -437,4 +438,3 @@ int main(int argc, char** argv){
 
     return 0;
 }
-    

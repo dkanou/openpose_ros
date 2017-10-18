@@ -1,14 +1,4 @@
-//#define USE_CAFFE
-/*#include <openpose/pose/poseExtractor.hpp>
-#include <openpose/pose/poseExtractorCaffe.hpp>
-#include <openpose/pose/poseParameters.hpp>
 
-#include <openpose/core/headers.hpp>
-#include <openpose/filestream/headers.hpp>
-#include <openpose/gui/headers.hpp>
-#include <openpose/pose/headers.hpp>
-#include <openpose/utilities/headers.hpp>
-*/
 #include <openpose/headers.hpp>
 
 #include <std_srvs/Empty.h>

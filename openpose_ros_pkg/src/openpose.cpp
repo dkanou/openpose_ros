@@ -1,4 +1,3 @@
-// ------------------------- OpenPose Library Tutorial - Real Time Pose Estimation -------------------------
 // If the user wants to learn to use the OpenPose library, we highly recommend to start with the `examples/tutorial_*/` folders.
 // This example summarizes all the funcitonality of the OpenPose library:
     // 1. Read folder of images / video / webcam  (`producer` module)
@@ -14,6 +13,13 @@
         // For the Datum struct that the `thread` module sends between the queues
     // 2. `utilities` module: for the error & logging functions, i.e. op::error & op::log respectively
 // This file should only be used for the user to take specific examples.
+
+namespace google{}
+namespace gflags{}
+using namespace google;
+using namespace gflags;
+
+
 
 // C++ std library dependencies
 #include <atomic>
@@ -425,7 +431,9 @@ int main(int argc, char *argv[])
     google::InitGoogleLogging("opRealTimePoseDemo");
 
     // Parsing command line flags
-    gflags::ParseCommandLineFlags(&argc, &argv, true);
+   // gflags::ParseCommandLineFlags(&argc, &argv, true);
+    ParseCommandLineFlags(&argc, &argv, true);
+
 
     // Running opRealTimePoseDemo
     return opRealTimePoseDemo();
