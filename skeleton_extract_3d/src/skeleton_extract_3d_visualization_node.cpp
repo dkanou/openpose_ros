@@ -20,6 +20,11 @@
 ros::Publisher   marker_pub;
 ros::Publisher   skeleton_pub;
 
+//define resolution
+
+#define width 640
+#define height 480
+
 // Function to check if 3d detection is not NAN
 bool PointISValid(const openpose_ros_msgs::BodypartDetection_3d bodypart){
   if (std::isnan(bodypart.x) || std::isnan(bodypart.y) || std::isnan(bodypart.z)){return false;}
@@ -63,7 +68,7 @@ public:
     visualization_msgs::Marker marker;
 
     // Set boyjoints markers
-    marker.header.frame_id = "/kinect2_ir_optical_frame";
+    marker.header.frame_id = "/camera_optical_frame";///kinect2_ir_optical_frame
     marker.id = person_msg.person_ID;
     marker.ns = "joints";
     marker.header.stamp = ros::Time();
@@ -86,7 +91,7 @@ public:
    visualization_msgs::Marker skeleton;
 
    skeleton.id  = person_msg.person_ID;
-   skeleton.header.frame_id = "/kinect2_ir_optical_frame";
+   skeleton.header.frame_id = "/camera_optical_frame";///kinect2_ir_optical_frame
    skeleton.ns = "skeleton";
    skeleton.header.stamp = ros::Time();
    // Skeleton will be lines
@@ -331,7 +336,8 @@ int main(int argc, char **argv)
   //Create an object of class SubscribeAndPublish that will take care of everything
   SubscribeAndPublish SAPObject;
 
-  ros::spin();
+
+  ros::spinOnce();
 
   return 0;
 }

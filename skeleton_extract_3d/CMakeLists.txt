@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   openpose_ros_msgs  
   visualization_msgs
+  
 )
 
 find_package(PCL 1.7 REQUIRED)
@@ -20,6 +21,7 @@ find_package(PCL 1.7 REQUIRED)
 catkin_package(
   CATKIN_DEPENDS pcl_ros #other_catkin_pkg
 )
+
 
 include_directories(
         ${catkin_INCLUDE_DIRS}

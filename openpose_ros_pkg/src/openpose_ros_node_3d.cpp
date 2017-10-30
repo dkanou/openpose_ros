@@ -168,7 +168,7 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
   const op::Array<float> poses = g_pose_extractor->getPoseKeypoints();  
 
   // VISUALIZE OUTPUT
-  //const auto poseKeypoints = g_pose_extractor->getPoseKeypoints();
+  const auto poseKeypoints = g_pose_extractor->getPoseKeypoints();
 
   op::Point<int> outputSize(output_size.x, output_size.y);
   op::CvMatToOpOutput cvMatToOpOutput{outputSize};
@@ -192,7 +192,7 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
   ros_image = *(cv_ptr_out->toImageMsg());
 
 
-  //frameDisplayer.displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
+  frameDisplayer.displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
   image_skeleton_pub.publish(ros_image);
 
   // End Visualize Output
@@ -299,10 +299,10 @@ int main(int argc, char** argv)
   ros::NodeHandle local_nh("~");
 //  g_net_input_size = op::Point(getParam(local_nh, "net_input_width", 656), getParam(local_nh, "net_input_height", 368));
 
-  g_net_input_size.x = getParam(local_nh, "net_input_width", 656);
-  g_net_input_size.y = getParam(local_nh, "net_input_height", 368);
+  g_net_input_size.x = getParam(local_nh, "net_input_width", 640);
+  g_net_input_size.y = getParam(local_nh, "net_input_height", 480);
 
-  op::Point<int> net_output_size(getParam(local_nh, "net_output_width", 656), getParam(local_nh, "net_output_height", 368));
+  op::Point<int> net_output_size(getParam(local_nh, "net_output_width", 640), getParam(local_nh, "net_output_height", 480));
   //op::Point<int> output_size(getParam(local_nh, "output_width", 1280), getParam(local_nh, "output_height", 720));
   //op::Point<int> output_size(getParam(local_nh, "output_width", 1024), getParam(local_nh, "output_height", 1024));  
 
@@ -325,10 +325,10 @@ int main(int argc, char** argv)
 
   ros::ServiceServer service = nh.advertiseService("detect_poses_3d", detectPosesCallback);
 
-  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/detected_poses_image", 0 );  
+  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/detected_poses_image", 1 );//was 0	  
 
   //declare publisher of type openpose_ros_msgs::PersonDetection in topic /openpose_ros/detected_poses_keypoints
-  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/skeleton_3d/detected_poses_keypoints" , 0 );
+  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/skeleton_3d/detected_poses_keypoints" , 1 ); //was 0
 
   g_pose_extractor = std::shared_ptr<op::PoseExtractorCaffe>(
 /*        new op::PoseExtractorCaffe(g_net_input_size, net_output_size, output_size, g_num_scales,

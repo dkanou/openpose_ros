@@ -54,7 +54,7 @@ DEFINE_int32(logging_level,             4,              "The logging level. Inte
                                                         " low priority messages and 4 for important ones.");
 
 // Camera Topic
-DEFINE_string(camera_topic,	           "/rgb/image",	"Image topic that OpenPose will process.");
+DEFINE_string(camera_topic,	           "/camera/rgb/image_raw",	"Image topic that OpenPose will process.");
 
 // OpenPose
 std::string package_path = ros::package::getPath("openpose_ros_pkg");
@@ -65,8 +65,8 @@ std::string model_folder_location = package_path + "/../openpose/models/";
 #define NET_RES_X 640 
 #define NET_RES_Y 480  
 
-#define OUTPUT_RES_X 1280 // Display Resolution Output Width
-#define OUTPUT_RES_Y 720  // Display Resolution Output Height
+#define OUTPUT_RES_X 640 // Display Resolution Output Width
+#define OUTPUT_RES_Y 480  // Display Resolution Output Height
 
 
 #define MODEL_POSE  "COCO"                 //"Model to be used (e.g. COCO, MPI, MPI_4_layers).";

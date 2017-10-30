@@ -58,6 +58,23 @@ T getParam(const ros::NodeHandle& nh, const std::string& param_name, T default_v
 
 ros::Publisher		 keypoints_pub;
 
+ 
+ template <typename K>
+ K getParamK(const ros::NodeHandle& nh, const std::string& param_name, K default_value)
+ {
+   K value;
+   if (nh.hasParam(param_name))
+   {
+     nh.getParam(param_name, value);
+   }
+   else
+   {
+     ROS_WARN_STREAM("Parameter '" << param_name << "' not found, defaults to '" << default_value << "'");
+     value = default_value;
+   }
+   return value;
+ }
+
 op::PoseModel stringToPoseModel(const std::string& pose_model_string)
 {
   if (pose_model_string == "COCO")
@@ -286,10 +303,10 @@ int main(int argc, char** argv)
   ros::NodeHandle local_nh("~");
 //  g_net_input_size = op::Point(getParam(local_nh, "net_input_width", 656), getParam(local_nh, "net_input_height", 368));
 
-  g_net_input_size.x = getParam(local_nh, "net_input_width", 656);
-  g_net_input_size.y = getParam(local_nh, "net_input_height", 368);
+  g_net_input_size.x = getParam(local_nh, "net_input_width", 640);
+  g_net_input_size.y = getParam(local_nh, "net_input_height", 480);
 
-  op::Point<int> net_output_size(getParam(local_nh, "net_output_width", 656), getParam(local_nh, "net_output_height", 368));
+  op::Point<int> net_output_size(getParam(local_nh, "net_output_width", 640), getParam(local_nh, "net_output_height", 480));
   //op::Point<int> output_size(getParam(local_nh, "output_width", 1280), getParam(local_nh, "output_height", 720));
   //op::Point<int> output_size(getParam(local_nh, "output_width", 1024), getParam(local_nh, "output_height", 1024));  
 
@@ -313,9 +330,9 @@ int main(int argc, char** argv)
   ros::ServiceServer service = nh.advertiseService("detect_poses", detectPosesCallback);
 
 
-  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 0 );  
+  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 1000 ); //was 0  
   //declare publisher of type openpose_ros_msgs::PersonDetection in topic /openpose_ros/detected_poses_keypoints
-  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 0 );
+  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 1 ); //was 0
 
 
   g_pose_extractor = std::shared_ptr<op::PoseExtractorCaffe>(

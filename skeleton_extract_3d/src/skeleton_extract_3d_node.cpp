@@ -1,9 +1,17 @@
 // This code synchronizes the 3d point cloud and 2D image and publishes 3d locations of human skeletons
+#include <iostream>
+#include <vector>
+#include <cmath>
+
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
+#include "message_filters/time_synchronizer.h" //Added from internet
 #include <message_filters/sync_policies/approximate_time.h>
+
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <ros/callback_queue.h> // From internet
+#include <boost/bind.hpp>	//from internet
 
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
@@ -11,24 +19,20 @@
 
 #include <cv_bridge/cv_bridge.h>
 
-#include <openpose_ros_msgs/GetPersons.h>
 
 #include <pcl/common/common.h>
-
 #include <pcl/filters/passthrough.h>
-#include <iostream>
 
-#include <vector>
-#include <cmath>
 
+#include <openpose_ros_msgs/GetPersons.h>
 #include <openpose_ros_msgs/BodypartDetection_3d.h>
 #include <openpose_ros_msgs/PersonDetection_3d.h>
 
 
 // Set resolution
 
-#define width  960
-#define height 540
+#define width  640
+#define height 480
 
 
 
@@ -197,15 +201,20 @@ typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::PointCloud2
 
 //Declare Callback
 void callback(const sensor_msgs::PointCloud2ConstPtr& cloud_msg, const sensor_msgs::ImageConstPtr& image_msg){
+
+    std::cout << "Welcome to the callback. " << std::endl;
     ROS_INFO("Cloud and Image Messages Received!");
     ROS_INFO("    Cloud Time Stamp: %f", cloud_msg->header.stamp.toSec());
     ROS_INFO("    Image Time Stamp: %f", image_msg->header.stamp.toSec()); 
 
 
     // Publish input pointcloud and image
+
     pc_pub.publish(*cloud_msg);
+
     image_pub.publish(*image_msg); 
  
+
     srv.request.image = *image_msg;
       if (client.call(srv))
       {
@@ -412,26 +421,32 @@ int main(int argc, char** argv){
     // Declare Node Handle
     ros::NodeHandle nh("~");
 
+
+    std::cout<<"We are in the main. "<<std::endl;
     // Declare Subscribers
     // Synchronize Point Cloud and Image Subscription Received Messages
-    message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub(nh, "point_cloud", 1);
-    message_filters::Subscriber<sensor_msgs::Image> image_sub(nh, "image", 1);
+    message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub(nh, "/camera/depth/points", 1);
+    message_filters::Subscriber<sensor_msgs::Image> image_sub(nh, "/camera/rgb/image_raw", 1);
     client = nh.serviceClient<openpose_ros_msgs::GetPersons>("skeleton_2d_detector");
 
 
     // Pointcloud publisher topic /openpose_ros/input_pointcloud
-    pc_pub = nh.advertise<sensor_msgs::PointCloud2>( "/openpose_ros/skeleton_3d/input_pointcloud", 0);
+    pc_pub = nh.advertise<sensor_msgs::PointCloud2>( "/openpose_ros/skeleton_3d/input_pointcloud", 1);
+    std::cout<<"pc_pub"<<std::endl;
 
     // Image publisher topic /openpose_ros/input_rgb
-    image_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/input_rgb", 0);
+    image_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/input_rgb", 1);
+    std::cout << "input_rgb pub" << std::endl;
 
     // Keypoints in 3D topic /openpose_ros/detected_poses_keypoints_3d
-    keypoints_3d_pub = nh.advertise<openpose_ros_msgs::PersonDetection_3d>( "/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 0);
-
+    keypoints_3d_pub = nh.advertise<openpose_ros_msgs::PersonDetection_3d>( "/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 1);
+    std::cout << "3d_keypoint pub" << std::endl;
 
     // ApproximateTime takes a queue size as its constructor argument, hence MySyncPolicy(10)
     message_filters::Synchronizer<MySyncPolicy> sync(MySyncPolicy(10), cloud_sub, image_sub);
     sync.registerCallback(boost::bind(&callback, _1, _2));
+    std::cout << "callback" << std::endl;
+     
 
     // Spin Forever
     ros::spin();
