@@ -187,7 +187,7 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
   op::Array<float> outputArray;
   std::tie(scaleInputToOutput, outputArray) = cvMatToOpOutput.format(image);
 
-  //poseRenderer->renderPose(outputArray, poseKeypoints);
+ // poseRenderer->renderPose(outputArray, poseKeypoints);
   poseRenderer->renderPose(outputArray, poses);
   auto outputImage = opOutputToCvMat.formatToCvMat(outputArray);
 
@@ -198,7 +198,7 @@ bool detectPosesCallback(openpose_ros_msgs::GetPersons::Request& req, openpose_r
   ros_image = *(cv_ptr_out->toImageMsg());
 
 
-  //frameDisplayer.displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
+ // frameDisplayer.displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
   image_skeleton_pub.publish(ros_image);
   
   // End Visualize Output
@@ -330,9 +330,9 @@ int main(int argc, char** argv)
   ros::ServiceServer service = nh.advertiseService("detect_poses", detectPosesCallback);
 
 
-  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 1000 ); //was 0  
+  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 5 ); //was 0  
   //declare publisher of type openpose_ros_msgs::PersonDetection in topic /openpose_ros/detected_poses_keypoints
-  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 1 ); //was 0
+  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 5 ); //was 0
 
 
   g_pose_extractor = std::shared_ptr<op::PoseExtractorCaffe>(

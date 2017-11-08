@@ -164,7 +164,7 @@ int openPoseROSTutorial()
      openpose_ros_msgs::GetPersons srv;
  
      // Declare Publisher
-     ros::Publisher input_image_pub  = nh.advertise<sensor_msgs::Image>( "/openpose_ros/input_image", 0 );  
+     ros::Publisher input_image_pub  = nh.advertise<sensor_msgs::Image>( "/openpose_ros/input_image", 1 );  
  
      // Initialize cv_ptr
      sensor_msgs::Image ros_image;

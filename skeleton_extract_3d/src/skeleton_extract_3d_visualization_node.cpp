@@ -50,11 +50,11 @@ public:
   SubscribeAndPublish()
   {
     //Topics you want to publish
-    marker_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_markers", 1);
-    skeleton_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_skeleton", 1);
+    marker_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_markers", 0);
+    skeleton_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_skeleton", 0);
 
     //Topics you want to subscribe
-    sub_ = n_.subscribe("/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 1, &SubscribeAndPublish::callback, this);
+    sub_ = n_.subscribe("/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 0, &SubscribeAndPublish::callback, this);
   }
 
   // Declare callback for subscriber
