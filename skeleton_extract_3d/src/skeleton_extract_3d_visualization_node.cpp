@@ -22,8 +22,8 @@ ros::Publisher   skeleton_pub;
 
 //define resolution
 
-#define width 640
-#define height 480
+//#define width 640
+//#define height 480
 
 // Function to check if 3d detection is not NAN
 bool PointISValid(const openpose_ros_msgs::BodypartDetection_3d bodypart){
@@ -50,16 +50,20 @@ public:
   SubscribeAndPublish()
   {
     //Topics you want to publish
-    marker_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_markers", 0);
-    skeleton_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_skeleton", 0);
+    marker_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_markers", 10);
+    ROS_INFO("pub vis_markers");
 
+    skeleton_pub = n_.advertise<visualization_msgs::Marker>("/openpose_ros/skeleton_3d/visualization_skeleton", 10);
+    ROS_INFO("pub vis_skelet");
     //Topics you want to subscribe
-    sub_ = n_.subscribe("/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 0, &SubscribeAndPublish::callback, this);
+    sub_ = n_.subscribe("/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 10, &SubscribeAndPublish::callback, this);
+    ROS_INFO("Sub to det_pose_keyp");
   }
 
   // Declare callback for subscriber
   void callback(const openpose_ros_msgs::PersonDetection_3d& person_msg)
   {
+    ROS_INFO("Entered the callback");
 
     ROS_INFO("3D Detection Received!");
 
@@ -68,7 +72,7 @@ public:
     visualization_msgs::Marker marker;
 
     // Set boyjoints markers
-    marker.header.frame_id = "/camera_optical_frame";///kinect2_ir_optical_frame
+    marker.header.frame_id = "/camera_rgb_optical_frame";///kinect2_ir_optical_frame
     marker.id = person_msg.person_ID;
     marker.ns = "joints";
     marker.header.stamp = ros::Time();
@@ -91,7 +95,7 @@ public:
    visualization_msgs::Marker skeleton;
 
    skeleton.id  = person_msg.person_ID;
-   skeleton.header.frame_id = "/camera_optical_frame";///kinect2_ir_optical_frame
+   skeleton.header.frame_id = "/camera_rgb_optical_frame";///kinect2_ir_optical_frame
    skeleton.ns = "skeleton";
    skeleton.header.stamp = ros::Time();
    // Skeleton will be lines
@@ -332,12 +336,19 @@ int main(int argc, char **argv)
 {
   //Initiate ROS
   ros::init(argc, argv, "skeleton_extract_3d_visualization_node");
-
-  //Create an object of class SubscribeAndPublish that will take care of everything
+  
+  ROS_INFO("Initialise ROS");
+  
+ 
+ //Create an object of class SubscribeAndPublish that will take care of everything
+  
+  ROS_INFO("create object, before callback");
   SubscribeAndPublish SAPObject;
+  ROS_INFO("after sub and pub");
 
 
-  ros::spinOnce();
+
+  ros::spin();
 
   return 0;
 }

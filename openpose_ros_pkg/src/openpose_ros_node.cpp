@@ -310,8 +310,8 @@ int main(int argc, char** argv)
   //op::Point<int> output_size(getParam(local_nh, "output_width", 1280), getParam(local_nh, "output_height", 720));
   //op::Point<int> output_size(getParam(local_nh, "output_width", 1024), getParam(local_nh, "output_height", 1024));  
 
-  output_size.x = getParam(local_nh, "output_width", 1024);
-  output_size.y = getParam(local_nh, "output_height", 1024);
+  output_size.x = getParam(local_nh, "output_width", 640); //1024
+  output_size.y = getParam(local_nh, "output_height", 480); //1024
 
   g_num_scales = getParam(local_nh, "num_scales", 1);
   g_scale_gap = getParam(local_nh, "scale_gap", 0.3);
@@ -323,16 +323,16 @@ int main(int argc, char** argv)
   std::string folder_location = package_path + "/../openpose/models/";
 
   std::string model_folder = getParam(local_nh, "model_folder", folder_location);
-  op::PoseModel pose_model = stringToPoseModel(getParam(local_nh, "pose_model", std::string("COCO")));
+  op::PoseModel pose_model = stringToPoseModel(getParam(local_nh, "pose_model", std::string("MPI")));
   g_bodypart_map = getBodyPartMapFromPoseModel(pose_model);
 
   ros::NodeHandle nh;
   ros::ServiceServer service = nh.advertiseService("detect_poses", detectPosesCallback);
 
 
-  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 5 ); //was 0  
+  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/detected_poses_image", 10 ); //was 0  
   //declare publisher of type openpose_ros_msgs::PersonDetection in topic /openpose_ros/detected_poses_keypoints
-  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 5 ); //was 0
+  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/detected_poses_keypoints" , 10 ); //was 0
 
 
   g_pose_extractor = std::shared_ptr<op::PoseExtractorCaffe>(

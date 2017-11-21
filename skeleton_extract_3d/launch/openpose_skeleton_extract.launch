@@ -1,7 +1,7 @@
 <launch>
 	
   <!-- Launch openpose service-->
-  <node name="openpose_ros_node_3d" pkg="openpose_ros_pkg" type="openpose_ros_node_3d" output="screen" />
+  <node name="openpose_ros_node_3d" pkg="openpose_ros_pkg" type="openpose_ros_node_3d" />
   <!-- Launch the skeleton extractor node -->
   <node name="skeleton_extract_3d_node" pkg="skeleton_extract_3d" type="skeleton_extract_3d_node" output="screen" >
     <remap from="~point_cloud" to="/camera/depth_registered/points" />

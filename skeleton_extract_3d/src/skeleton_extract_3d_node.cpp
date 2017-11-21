@@ -428,21 +428,21 @@ int main(int argc, char** argv){
     std::cout<<"We are in the main. "<<std::endl;
     // Declare Subscribers
     // Synchronize Point Cloud and Image Subscription Received Messages
-   message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub(nh, "/camera/depth_registered/points", 5);
-   message_filters::Subscriber<sensor_msgs::Image> image_sub(nh, "/camera/rgb/image_raw", 5);
+   message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub(nh, "/camera/depth_registered/points", 10);
+   message_filters::Subscriber<sensor_msgs::Image> image_sub(nh, "/camera/rgb/image_raw", 10);
    client = nh.serviceClient<openpose_ros_msgs::GetPersons>("skeleton_2d_detector");
 
 
     // Pointcloud publisher topic /openpose_ros/input_pointcloud
-    pc_pub = nh.advertise<sensor_msgs::PointCloud2>( "/openpose_ros/skeleton_3d/input_pointcloud", 5);
+    pc_pub = nh.advertise<sensor_msgs::PointCloud2>( "/openpose_ros/skeleton_3d/input_pointcloud", 10);
     std::cout<<"pc_pub"<<std::endl;
 
     // Image publisher topic /openpose_ros/input_rgb
-    image_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/input_rgb", 5);
+    image_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/input_rgb", 10);
     std::cout << "input_rgb pub" << std::endl;
 
    //Keypoints in 3D topic /openpose_ros/detected_poses_keypoints_3d
-    keypoints_3d_pub = nh.advertise<openpose_ros_msgs::PersonDetection_3d>( "/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 5);
+    keypoints_3d_pub = nh.advertise<openpose_ros_msgs::PersonDetection_3d>( "/openpose_ros/skeleton_3d/detected_poses_keypoints_3d", 10);
     std::cout << "3d_keypoint pub" << std::endl;
 
     //ApproximateTime takes a queue size as its constructor argument, hence MySyncPolicy(10)

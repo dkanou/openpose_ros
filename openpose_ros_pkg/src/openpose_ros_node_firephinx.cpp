@@ -69,7 +69,7 @@ std::string model_folder_location = package_path + "/../openpose/models/";
 #define OUTPUT_RES_Y 480  // Display Resolution Output Height
 
 
-#define MODEL_POSE  "COCO"                 //"Model to be used (e.g. COCO, MPI, MPI_4_layers).";
+#define MODEL_POSE  "MPI"                 //"Model to be used (e.g. COCO, MPI, MPI_4_layers).";
 DEFINE_int32(num_gpu_start,             0,              "GPU device start number.");
 DEFINE_double(scale_gap,                0.3,            "Scale gap between scales. No effect unless num_scales>1. Initial scale is always 1. If you"
                                                         " want to change the initial scale, you actually want to multiply the `net_resolution` by"
@@ -164,7 +164,7 @@ int openPoseROSTutorial()
      openpose_ros_msgs::GetPersons srv;
  
      // Declare Publisher
-     ros::Publisher input_image_pub  = nh.advertise<sensor_msgs::Image>( "/openpose_ros/input_image", 1 );  
+     ros::Publisher input_image_pub  = nh.advertise<sensor_msgs::Image>( "/openpose_ros/input_image", 10 );  
  
      // Initialize cv_ptr
      sensor_msgs::Image ros_image;

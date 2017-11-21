@@ -322,10 +322,10 @@ int main(int argc, char** argv)
 
   ros::ServiceServer service = nh.advertiseService("detect_poses_3d", detectPosesCallback);
 
-  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/detected_poses_image", 5 );//was 0	  
+  image_skeleton_pub = nh.advertise<sensor_msgs::Image>( "/openpose_ros/skeleton_3d/detected_poses_image", 10 );//was 0	  
 
   //declare publisher of type openpose_ros_msgs::PersonDetection in topic /openpose_ros/detected_poses_keypoints
-  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/skeleton_3d/detected_poses_keypoints" , 5 ); //was 0
+  keypoints_pub = nh.advertise<openpose_ros_msgs::PersonDetection>( "/openpose_ros/skeleton_3d/detected_poses_keypoints" , 10 ); //was 0
 
   g_pose_extractor = std::shared_ptr<op::PoseExtractorCaffe>(
 /*        new op::PoseExtractorCaffe(g_net_input_size, net_output_size, output_size, g_num_scales,
