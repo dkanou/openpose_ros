@@ -323,7 +323,7 @@ int main(int argc, char** argv)
   std::string folder_location = package_path + "/../openpose/models/";
 
   std::string model_folder = getParam(local_nh, "model_folder", folder_location);
-  op::PoseModel pose_model = stringToPoseModel(getParam(local_nh, "pose_model", std::string("MPI")));
+  op::PoseModel pose_model = stringToPoseModel(getParam(local_nh, "pose_model", std::string("COCO")));
   g_bodypart_map = getBodyPartMapFromPoseModel(pose_model);
 
   ros::NodeHandle nh;

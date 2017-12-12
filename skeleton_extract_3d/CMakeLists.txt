@@ -40,6 +40,5 @@ add_executable(skeleton_extract_3d_visualization_node src/skeleton_extract_3d_vi
 target_link_libraries(skeleton_extract_3d_visualization_node ${catkin_LIBRARIES})
 
 add_dependencies(skeleton_extract_3d_visualization_node ${catkin_EXPORTED_TARGETS})
-
-
+  	
 

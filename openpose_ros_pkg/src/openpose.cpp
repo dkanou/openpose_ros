@@ -59,8 +59,8 @@ DEFINE_int32(camera,                    0,              "The camera index for cv
 DEFINE_string(camera_resolution,        "640x480",     "Size of the camera frames to ask for.");
 DEFINE_double(camera_fps,               30.0,           "Frame rate for the webcam (only used when saving video from webcam). Set this value to the"
                                                         " minimum value between the OpenPose displayed speed and the webcam real frame rate.");
-DEFINE_string(video,                    "",             "Use a video file instead of the camera. Use `examples/media/video.avi` for our default"
-                                                        " example video.");
+DEFINE_string(video,                    "/data/emily/catkin_ws/src/src-save1/openpose_ros/src/openpose_ros/openpose/examples/media/brianposes.avi",             "Use a video file instead of the camera. Use `examples/media/video.avi` for our default"
+							" example video.");
 DEFINE_string(image_dir,                "",             "Process a directory of images. Use `examples/media/` for our default example folder with 20"
                                                         " images.");
 DEFINE_uint64(frame_first,              0,              "Start on desired frame number. Indexes are 0-based, i.e. the first frame has index 0.");
@@ -70,8 +70,8 @@ DEFINE_bool(frame_flip,                 false,          "Flip/mirror each frame 
 DEFINE_int32(frame_rotate,              0,              "Rotate each frame, 4 possible values: 0, 90, 180, 270.");
 DEFINE_bool(frames_repeat,              false,          "Repeat frames when finished.");
 // OpenPose
-DEFINE_string(model_folder,             "models/",      "Folder path (absolute or relative) where the models (pose, face, ...) are located.");
-DEFINE_string(resolution,               "640x480",     "The image resolution (display and output). Use \"-1x-1\" to force the program to use the"
+DEFINE_string(model_folder,             "/data/emily/catkin_ws/src/src-save1/openpose_ros/src/openpose_ros/openpose/models/",      "Folder path (absolute or relative) where the models (pose, face, ...) are located.");
+DEFINE_string(resolution,               "480x320",     "The image resolution (display and output). Use \"-1x-1\" to force the program to use the"
                                                         " default images resolution.");
 DEFINE_int32(num_gpu,                   -1,             "The number of GPU devices to use. If negative, it will use all the available GPUs in your"
                                                         " machine.");
@@ -83,8 +83,8 @@ DEFINE_int32(keypoint_scale,            0,              "Scaling of the (x,y) co
                                                         " `resolution`), `3` to scale it in the range [0,1], and 4 for range [-1,1]. Non related"
                                                         " with `num_scales` and `scale_gap`.");
 // OpenPose Body Pose
-DEFINE_string(model_pose,               "MPI",         "Model to be used (e.g. COCO, MPI, MPI_4_layers).");
-DEFINE_string(net_resolution,           "640x480",      "Multiples of 16. If it is increased, the accuracy usually increases. If it is decreased,"
+DEFINE_string(model_pose,               "COCO",         "Model to be used (e.g. COCO, MPI, MPI_4_layers).");
+DEFINE_string(net_resolution,           "480x320",      "Multiples of 16. If it is increased, the accuracy usually increases. If it is decreased,"
                                                         " the speed increases.");
 DEFINE_int32(num_scales,                1,              "Number of scales to average.");
 DEFINE_double(scale_gap,                0.3,            "Scale gap between scales. No effect unless num_scales>1. Initial scale is always 1. If you"
@@ -99,15 +99,15 @@ DEFINE_bool(heatmaps_add_bkg,           false,          "Same functionality as `
                                                         " background.");
 DEFINE_bool(heatmaps_add_PAFs,          false,          "Same functionality as `add_heatmaps_parts`, but adding the PAFs.");
 // OpenPose Face
-DEFINE_bool(face,                       false,          "Enables face keypoint detection. It will share some parameters from the body pose, e.g."
+DEFINE_bool(face,                       true,          "Enables face keypoint detection. It will share some parameters from the body pose, e.g."
                                                         " `model_folder`.");
-DEFINE_string(face_net_resolution,      "368x368",      "Multiples of 16. Analogous to `net_resolution` but applied to the face keypoint detector."
+DEFINE_string(face_net_resolution,      "320x320",      "Multiples of 16. Analogous to `net_resolution` but applied to the face keypoint detector."
                                                         " 320x320 usually works fine while giving a substantial speed up when multiple faces on the"
                                                         " image.");
 // OpenPose Hand
 DEFINE_bool(hand,                       false,          "Enables hand keypoint detection. It will share some parameters from the body pose, e.g."
                                                         " `model_folder`.");
-DEFINE_string(hand_net_resolution,      "368x368",      "Multiples of 16. Analogous to `net_resolution` but applied to the hand keypoint detector.");
+DEFINE_string(hand_net_resolution,      "300x300",      "Multiples of 16. Analogous to `net_resolution` but applied to the hand keypoint detector.");
 DEFINE_int32(hand_detection_mode,       -1,             "Set to 0 to perform 1-time keypoint detection (fastest), 1 for iterative detection"
                                                         " (recommended for images and fast videos, slow method), 2 for tracking (recommended for"
                                                         " webcam if the frame rate is >10 FPS per GPU used and for video, in practice as fast as"
@@ -120,7 +120,7 @@ DEFINE_int32(part_to_show,              0,              "Part to show from the s
 DEFINE_bool(disable_blending,           false,          "If blending is enabled, it will merge the results with the original frame. If disabled, it"
                                                         " will only display the results.");
 // OpenPose Rendering Pose
-DEFINE_int32(render_pose,               0,              "Set to 0 for no rendering, 1 for CPU rendering (slightly faster), and 2 for GPU rendering"
+DEFINE_int32(render_pose,               1,              "Set to 0 for no rendering, 1 for CPU rendering (slightly faster), and 2 for GPU rendering"
                                                         " (slower but greater functionality, e.g. `alpha_X` flags). If rendering is enabled, it will"
                                                         " render both `outputData` and `cvOutputData` with the original image and desired body part"
                                                         " to be shown (i.e. keypoints, heat maps or PAFs).");
@@ -129,12 +129,12 @@ DEFINE_double(alpha_pose,               0.6,            "Blending factor (range 
 DEFINE_double(alpha_heatmap,            0.7,            "Blending factor (range 0-1) between heatmap and original frame. 1 will only show the"
                                                         " heatmap, 0 will only show the frame. Only valid for GPU rendering.");
 // OpenPose Rendering Face
-DEFINE_int32(render_face,               -1,             "Analogous to `render_pose` but applied to the face. Extra option: -1 to use the same"
+DEFINE_int32(render_face,               0,             "Analogous to `render_pose` but applied to the face. Extra option: -1 to use the same"
                                                         " configuration that `render_pose` is using.");
 DEFINE_double(alpha_face,               0.6,            "Analogous to `alpha_pose` but applied to face.");
 DEFINE_double(alpha_heatmap_face,       0.7,            "Analogous to `alpha_heatmap` but applied to face.");
 // OpenPose Rendering Hand
-DEFINE_int32(render_hand,               -1,             "Analogous to `render_pose` but applied to the hand. Extra option: -1 to use the same"
+DEFINE_int32(render_hand,               0,             "Analogous to `render_pose` but applied to the hand. Extra option: -1 to use the same"
                                                         " configuration that `render_pose` is using.");
 DEFINE_double(alpha_hand,               0.6,            "Analogous to `alpha_pose` but applied to hand.");
 DEFINE_double(alpha_heatmap_hand,       0.7,            "Analogous to `alpha_heatmap` but applied to hand.");
@@ -142,7 +142,7 @@ DEFINE_double(alpha_heatmap_hand,       0.7,            "Analogous to `alpha_hea
 DEFINE_bool(fullscreen,                 false,          "Run in full-screen mode (press f during runtime to toggle).");
 DEFINE_bool(process_real_time,          true,          "Enable to keep the original source frame rate (e.g. for video). If the processing time is"
                                                         " too long, it will skip frames. If it is too fast, it will slow it down.");
-DEFINE_bool(no_gui_verbose,             false,          "Do not write text on output images on GUI (e.g. number of current frame and people). It"
+DEFINE_bool(no_gui_verbose,             true,          "Do not write text on output images on GUI (e.g. number of current frame and people). It"
                                                         " does not affect the pose rendering.");
 DEFINE_bool(no_display,                 false,          "Do not open a display window.");
 // Result Saving
