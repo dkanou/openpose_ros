@@ -54,7 +54,7 @@ DEFINE_int32(logging_level,             4,              "The logging level. Inte
                                                         " low priority messages and 4 for important ones.");
 
 // Camera Topic
-DEFINE_string(camera_topic,	           "/VideoRaw",	"Image topic that OpenPose will process.");
+DEFINE_string(camera_topic,	           "/camera/rgb/image_raw",	"Image topic that OpenPose will process.");
 
 // OpenPose
 std::string package_path = ros::package::getPath("openpose_ros_pkg");
