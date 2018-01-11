@@ -20,6 +20,9 @@ y_RT, z_RT= -0.50, 0.32 #Y & Z coord of right hand of robot in T pose
 sx = 1. # depth
 sy = 1. #(y_RT - y_RN)/(y_HT - y_HN) # left-right 
 sz = 1. #(z_RT - z_RN)*0.8/(z_HT - z_HN) # top-bottom
+torso_2_x = 0.2
+torso_2_y = 0
+torso_2_z = 1.1904
 
 
 def calibration_callback(msg):
