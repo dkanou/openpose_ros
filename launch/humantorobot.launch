@@ -1,6 +1,6 @@
 <launch>
-<include file="/data/emily/dkanou/openpose_ros/src/openpose_ros/skeleton_extract_3d/launch/openpose_skeleton_extract.launch"/>
-<include file="/opt/ros/kinetic/share/openni2_launch/launch/openni2.launch"/>
+<include file="~/dkanou/openpose_ros/skeleton_extract_3d/launch/openpose_skeleton_extract.launch"
+<include file="/opt/ros/kinetic/share/openni2_launch/launch/openni2.launch">
 
-<node pkg="humantorobot" type="Calibration_final.py" name="Calibration_final.py" output="screen"/>
+<node pkg="openpose_ros" type="humantorobot" name="Calibration_final.py" output="screen"/>
 </launch>
